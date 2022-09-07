@@ -1,0 +1,11 @@
+{
+   "name": "AntiTelemetry",
+   "version": "1.0.0",
+   "description": "Obfuscates messages by silently injecting random invisible unicode characters.",
+   "authors": [
+      {
+         "name": "MagicSpells",
+         "id": "999391084398522368"
+      }
+   ]
+}
