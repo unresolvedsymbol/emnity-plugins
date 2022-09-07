@@ -13,33 +13,35 @@ const AntiTelemetry: Plugin = {
     onStart() {
         const obfuscateMessage = (message: string) => {
             var words = message.split(" ");
-            for (var word in words) {
-                const firstChar = word[0];
-                var firstCodePt;
-                // toLowerCase != toUpperCase is a wacky way to check if it's a normal letter
-                if (!firstChar || !(firstCodePt = firstChar.codePointAt(0))
-                    || word.startsWith("http") // Skip links
+            for (var i = 0; i < words.length; ++i) {
+                var word = words[i], firstChar = words[i][0], firstCodePt;
+
+                if (!firstChar //|| !(firstCodePt = firstChar.codePointAt(0))
+                    || words[i].startsWith("http") // Skip links
                     || (word.startsWith(":") && word.endsWith(":")) // Skip Discord emoji
                     || word.length < 3 // Short words are probably not worth obfuscating
                     || firstChar.toLowerCase() == word[0].toUpperCase() // Make sure it's a normal latin letter
                     || firstCodePt > 127) // Make sure it's not already unicode
                     continue;
 
+                // This doesn't work as well as I'd like it to
+                /*
                 const wordSplitIndex = ~~(Math.random() * (word.length - 1)) + 1; // Be at least 1 char from the start or end of the word
-                word = word.substring(0, wordSplitIndex) + Chars[~~(Math.random() * Chars.length)] + word.substring(wordSplitIndex);
+                words[i] = word.substring(0, wordSplitIndex) + Chars[~~(Math.random() * Chars.length)] + word.substring(wordSplitIndex);
+                */
+
+                // Every 2 characters
+                for (var j = 1; j < word.length; j += 3)
+                    words[i] = word = word.substring(0, j) + Chars[~~(Math.random() * Chars.length)] + word.substring(j);
             }
             return words.join(" ");
         };
 
-        Patcher.instead(Messages, 'sendMessage', (self, args, orig) => {
-            const [channelId, opts] = args;
-            if (!opts?.content || !channelId) {
-                return orig.apply(self, args);
-            }
+        Patcher.before(Messages, 'sendMessage', (_, [channelId, message]) => {
+            if (!message?.content || !channelId)
+                return;
             
-            opts.content = obfuscateMessage(opts.content);
-
-            return orig.apply(self, [channelId, opts]);
+            message.content = obfuscateMessage(message.content);
         });
     },
 
