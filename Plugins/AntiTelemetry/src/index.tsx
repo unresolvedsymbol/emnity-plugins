@@ -1,6 +1,6 @@
-import { Messages } from 'emnity/metro/common';
-import { Plugin, registerPlugin } from 'emnity/managers/plugins';
-import { create } from 'emnity/patcher';
+import { Messages } from 'enmity/metro/common';
+import { Plugin, registerPlugin } from 'enmity/managers/plugins';
+import { create } from 'enmity/patcher';
 import manifest from '../manifest.json';
 
 const Patcher = create('anti-telemetry');
@@ -8,15 +8,7 @@ const Patcher = create('anti-telemetry');
 const Chars = ['\u200b', '\u200c', '\u200d', '\ufeff'];
 
 const AntiTelemetry: Plugin = {
-    name: 'AntiTelemetry',
-    version: '1.0.0',
-    description: 'Obfuscates messages by silently injecting random invisible unicode characters.',
-    authors: [
-      {
-         name: "MagicSpells",
-         id: "999391084398522368"
-      }
-    ],
+    ...manifest,
 
     onStart() {
         const obfuscateMessage = (message: string) => {
